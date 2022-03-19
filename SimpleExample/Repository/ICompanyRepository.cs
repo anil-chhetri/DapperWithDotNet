@@ -10,7 +10,7 @@ namespace SimpleExample.Repository
         Task<IEnumerable<Company>> GetAll();
         Task<Company> GetById(int Id);
         Task<Company> CreateCompany(CompanyDto newCompnay);
-        Task UpdateCompany(CompanyDto newCompnay);
+        Task UpdateCompany(int id, CompanyDto newCompnay);
 
         Task DeleteCompany(int Id);
 

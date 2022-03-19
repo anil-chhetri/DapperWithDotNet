@@ -91,7 +91,7 @@ namespace SimpleExample.Repository
             }
         }
 
-        public async Task UpdateCompany(CompanyDto newCompnay)
+        public async Task UpdateCompany(int id, CompanyDto newCompany)
         {
             var query = @"
             update dbo.company 
@@ -100,9 +100,10 @@ namespace SimpleExample.Repository
             ";
 
             var parameters = new DynamicParameters();
-            parameters.Add("Name", newCompnay.Name, System.Data.DbType.String);
-            parameters.Add("Address", newCompnay.Address, System.Data.DbType.String);
-            parameters.Add("Country", newCompnay.Country, System.Data.DbType.String);
+            parameters.Add("Name", newCompany.Name, System.Data.DbType.String);
+            parameters.Add("Address", newCompany.Address, System.Data.DbType.String);
+            parameters.Add("Country", newCompany.Country, System.Data.DbType.String);
+            parameters.Add("id", id);
 
             try
             {

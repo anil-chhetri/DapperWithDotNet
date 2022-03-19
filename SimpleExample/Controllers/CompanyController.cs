@@ -67,13 +67,13 @@ namespace SimpleExample.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateCompany(CompanyDto company)
+        public async Task<IActionResult> UpdateCompany(int id, CompanyDto company)
         {
             try
             {
-                await this.companyRepo.UpdateCompany(company);
+                await this.companyRepo.UpdateCompany(id, company);
                 return NoContent();
             }
             catch (Exception)
@@ -85,7 +85,7 @@ namespace SimpleExample.Controllers
 
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteCompany(int Id)
         {
             try
