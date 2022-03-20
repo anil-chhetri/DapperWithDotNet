@@ -12,6 +12,6 @@ namespace SimpleExample.Models
 
         public string Country { get; set; }
 
-        public IEnumerable<Employee> Employees { get; set; }
+        public List<Employee> Employees { get; set; } = new List<Employee>();
     }
 }

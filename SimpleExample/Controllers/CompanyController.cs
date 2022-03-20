@@ -98,5 +98,63 @@ namespace SimpleExample.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("ByEmployeeId/{Id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCompanyByEmployeeId(int Id)
+        {
+            try
+            {
+                var company = await this.companyRepo.GetCompanyByEmployeeId(Id);
+                if (company == null)
+                {
+                    return NotFound("Please check employee Id.");
+                }
+                else
+                {
+                    return Ok(company);
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("CompanyWithEmployees")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCompanyEmployees()
+        {
+            try
+            {
+                var compaines = await this.companyRepo.GetAllEmployeesWithCompany();
+                return Ok(compaines);
+            }
+            catch (System.Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("GetEmployee/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetEmployeeOfCompany(int id)
+        {
+            try
+            {
+                var company = await this.companyRepo.GetAllEmployeeCompany(id);
+                return Ok(company);
+            }
+            catch (System.Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

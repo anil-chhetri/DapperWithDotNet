@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -80,6 +81,57 @@ namespace SimpleExample.Repository
             }
         }
 
+        public async Task<Company> GetAllEmployeeCompany(int id)
+        {
+            var query = @"
+                select * from dbo.company where id =@id;
+                select * from dbo.employee where companyId = @id;
+            ";
+
+            using (var conn = context.CreateConnection())
+            {
+                using (var multi = await conn.QueryMultipleAsync(query, new { id = id }))
+                {
+                    var company = await multi.ReadSingleOrDefaultAsync<Company>();
+                    if (company != null)
+                    {
+                        company.Employees = (await multi.ReadAsync<Employee>()).ToList();
+                    }
+
+                    return company;
+                }
+            }
+
+        }
+
+        public async Task<IEnumerable<Company>> GetAllEmployeesWithCompany()
+        {
+            var query = @"
+            select c.*, e.*
+            from dbo.employee e 
+            inner join dbo.company c on c.id = e.companyId
+            ";
+
+            using (var conn = context.CreateConnection())
+            {
+                var companyDict = new Dictionary<int, Company>();
+                var compaines = await conn.QueryAsync<Company, Employee, Company>(query, (company, employee) =>
+                {
+                    if (!companyDict.TryGetValue(company.Id, out var currentcompany))
+                    {
+                        currentcompany = company;
+                        companyDict.Add(company.Id, currentcompany);
+
+                    }
+                    currentcompany.Employees.Add(employee);
+                    return currentcompany;
+                });
+
+                return compaines.Distinct().ToList();
+            }
+
+        }
+
         public async Task<Company> GetById(int Id)
         {
             var query = "Select * from company where id = @Id";
@@ -88,6 +140,19 @@ namespace SimpleExample.Repository
             {
                 var data = await connection.QuerySingleOrDefaultAsync<Company>(query, new { Id = Id });
                 return data;
+            }
+        }
+
+        public async Task<Company> GetCompanyByEmployeeId(int id)
+        {
+            var procedureName = "Usp_ShowCompanyForEmployeeId";
+            var parameters = new DynamicParameters();
+            parameters.Add("id", id, DbType.Int16, ParameterDirection.Input);
+
+            using (var connection = context.CreateConnection())
+            {
+                var company = await connection.QuerySingleOrDefaultAsync<Company>(procedureName, parameters, commandType: CommandType.StoredProcedure);
+                return company;
             }
         }
 
@@ -118,6 +183,8 @@ namespace SimpleExample.Repository
                 throw;
             }
         }
+
+
     }
 
 }

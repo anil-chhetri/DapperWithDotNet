@@ -58,6 +58,8 @@ namespace SimpleExample.Extensions
                     // var test = env.
                     foreach (var item in Directory.GetFiles(Path.Combine(curpath, "Procedure"), "*.sql", SearchOption.TopDirectoryOnly))
                     {
+                        var filename = Path.GetFileName(item);
+                        logger.LogInformation("executing procedure {filename}", filename);
                         var sql = File.ReadAllText(item);
                         con.Execute(sql);
                     }
