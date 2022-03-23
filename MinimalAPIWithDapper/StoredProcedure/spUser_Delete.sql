@@ -1,4 +1,4 @@
-create or alter procedure spUser_Get
+create or alter procedure spUser_Delete
     @id int
 as 
 begin 
